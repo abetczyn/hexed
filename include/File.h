@@ -1,5 +1,5 @@
 #pragma once
-
+#include <Windows.h>
 class File
 {
     public:
@@ -8,10 +8,10 @@ class File
         
         bool Open(const char* path);
         void Close();
-        unsigned long long GetSize() const;
-        void Seek(unsigned long long position);
+        long long GetSize() const;
+        void Seek(long long position);
         void Read(unsigned char byte);
-        void Read(void *buffer, unsigned long long size);
+        void Read(void *buffer, unsigned int nBytes);
 		void Write(unsigned char byte);
         bool IsOpen() const;
 		bool IsReadOnly() const;
@@ -21,14 +21,14 @@ class File
     private:
         char* m_filename;
 		char* m_fullPath;
-        unsigned long long m_filesize;
+        LARGE_INTEGER m_filesize;
         void* m_handle;
 		bool m_readOnly;
 };
 
-inline unsigned long long File::GetSize() const
+inline long long File::GetSize() const
 {
-    return m_filesize;
+    return m_filesize.QuadPart;
 }
 
 inline bool File::IsReadOnly() const

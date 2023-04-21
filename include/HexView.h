@@ -27,7 +27,7 @@ class HexView : public Window
         unsigned long long GetBottomLine();
 
         unsigned char* m_buffer;
-        unsigned long long m_bufferSize;
+        unsigned int m_bufferSize;
         unsigned long long m_topLine;
         unsigned long long m_selected;
         unsigned long long m_fileSize;

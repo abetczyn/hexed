@@ -30,8 +30,8 @@ void HexView::OnWindowRefreshed()
         return;
 
     assert(m_buffer);
-    int offset = m_topLine << 4;
-    int selectedLine = GetSelectedLine();
+    unsigned __int64 offset = m_topLine << 4;
+    unsigned __int64 selectedLine = GetSelectedLine();
     bool done = false;
 
     for (int j = 0; j < m_height; j++)
@@ -39,8 +39,8 @@ void HexView::OnWindowRefreshed()
         int y = 1 + j;
         WORD colour = 0;
 
-		int lastLine = (m_fileSize - 1) >> 4;
-		int curr = lastLine == 0 ? 0 : GetSelectedLine() * (m_height - 1) / lastLine;
+        unsigned __int64 lastLine = (m_fileSize - 1) >> 4;
+        unsigned __int64 curr = lastLine == 0 ? 0 : GetSelectedLine() * (m_height - 1) / lastLine;
         char c = j == curr ? 178 : 176;
         s_consoleBuffer->Write(0, y, Colours::Scrollbar, "%c", c);
 
@@ -63,7 +63,7 @@ void HexView::OnWindowRefreshed()
 
         for (int i = 0; i < 16; i++, offset++)
         {
-            int bufferIndex = offset - (m_topLine << 4);
+            unsigned __int64 bufferIndex = offset - (m_topLine << 4);
             assert(bufferIndex >= 0 && bufferIndex < m_fileSize);
             unsigned char c = m_buffer[bufferIndex];
 
@@ -122,13 +122,13 @@ void HexView::CacheFile(bool resizeBuffer)
         return;
 
     assert(m_topLine >= 0);
-    int offset = m_topLine << 4;
+    unsigned __int64 offset = m_topLine << 4;
     assert(offset >= 0 && offset < m_fileSize);
 
     if (resizeBuffer)
     {
         assert(m_height >= 0);
-        int screenSize = m_height << 4;
+        unsigned __int64 screenSize = m_height << 4;
 
         delete[] m_buffer;
         m_bufferSize = offset + screenSize >= m_fileSize ? m_fileSize - offset : screenSize;
@@ -201,7 +201,7 @@ void HexView::OnKeyEvent(KeyEvent& keyEvent)
 			{
 				m_nibbleIndex = 0;
 				m_selected = max(m_selected - 1, 0);
-				int selectedLine = GetSelectedLine();
+                unsigned __int64 selectedLine = GetSelectedLine();
 				if (selectedLine < m_topLine)
 				{
 					m_topLine--;
@@ -224,8 +224,8 @@ void HexView::OnKeyEvent(KeyEvent& keyEvent)
 			{
 				m_nibbleIndex = 1;
 				m_selected = max(min(m_selected + 1, m_fileSize - 1), 0);
-				int selectedLine = GetSelectedLine();
-				int bottomLine = GetBottomLine();
+                unsigned __int64 selectedLine = GetSelectedLine();
+                unsigned __int64 bottomLine = GetBottomLine();
 				if (selectedLine > bottomLine)
 				{
 					m_topLine++;
@@ -241,7 +241,7 @@ void HexView::OnKeyEvent(KeyEvent& keyEvent)
         case 'K':
         {
             refresh = false;
-            int selectedLine = GetSelectedLine();
+            unsigned __int64 selectedLine = GetSelectedLine();
             if (selectedLine == 0)
                 break;
 
@@ -262,8 +262,8 @@ void HexView::OnKeyEvent(KeyEvent& keyEvent)
         case 'J':
         {
             refresh = false;
-            int selectedLine = GetSelectedLine();
-            int lastLine = GetLastLine();
+            unsigned __int64 selectedLine = GetSelectedLine();
+            unsigned __int64 lastLine = GetLastLine();
 
             // If on the last line, don't move anywhere.
             if (selectedLine == lastLine)
@@ -273,7 +273,7 @@ void HexView::OnKeyEvent(KeyEvent& keyEvent)
             m_selected = max(min(m_selected + 16, m_fileSize - 1), 0);
             selectedLine = GetSelectedLine();
 
-            int bottomLine = GetBottomLine();
+            unsigned __int64 bottomLine = GetBottomLine();
             if (selectedLine > bottomLine)
             {
                 m_topLine++;
@@ -305,7 +305,7 @@ void HexView::OnKeyEvent(KeyEvent& keyEvent)
             if (keyEvent.IsControlKeyDown(LEFT_CTRL_PRESSED | RIGHT_CTRL_PRESSED))
             {
                 m_selected = max(m_fileSize - 1, 0);
-                int selectedLine = GetSelectedLine();
+                unsigned __int64 selectedLine = GetSelectedLine();
                 m_topLine = max(selectedLine - m_height + 1, 0);
                 fullDraw = true;
                 CacheFile();
@@ -321,29 +321,29 @@ void HexView::OnKeyEvent(KeyEvent& keyEvent)
         case VK_NEXT:
         {
             // Current selection column in the last line.
-            int lastLineSelected = max(min(((m_fileSize - 1) & ~0xf) | (m_selected & 0xf), m_fileSize - 1), 0);
+            unsigned __int64 lastLineSelected = max(min(((m_fileSize - 1) & ~0xf) | (m_selected & 0xf), m_fileSize - 1), 0);
 
             if (keyEvent.IsControlKeyDown(LEFT_CTRL_PRESSED | RIGHT_CTRL_PRESSED))
             {
                 // Control is down. Go to the bottom of the current page.
-                int bottomLine = GetBottomLine();
+                unsigned __int64 bottomLine = GetBottomLine();
 
                 // Select the offset at the bottom of the current page.
                 m_selected = min((bottomLine << 4) | (m_selected & 0xf), lastLineSelected);
             }
             else
             {
-                int selectedLine = GetSelectedLine();
+                unsigned __int64 selectedLine = GetSelectedLine();
 
                 // Get the current distance from the selection to the top line.
-                int delta = selectedLine - m_topLine;
+                unsigned __int64 delta = selectedLine - m_topLine;
 
                 // Select the offset at one page down from the current.
                 m_selected = min(m_selected + (m_height << 4), lastLineSelected);
 
                 // Determine if we need to update the top line.
                 selectedLine = GetSelectedLine();
-                int bottomLine = GetBottomLine();
+                unsigned __int64 bottomLine = GetBottomLine();
                 if (selectedLine > bottomLine)
                 {
                     // Update the top line, but maintain the current selection distance so the cursor
@@ -367,10 +367,10 @@ void HexView::OnKeyEvent(KeyEvent& keyEvent)
             }
             else
             {
-                int selectedLine = GetSelectedLine();
+                unsigned __int64 selectedLine = GetSelectedLine();
 
                 // Get the current distance from the selection to the top line.
-                int delta = selectedLine - m_topLine;
+                unsigned __int64 delta = selectedLine - m_topLine;
 
                 // Select the offset at one page up from the current.
                 m_selected = max(m_selected - (m_height << 4), (m_selected & 0xf));
@@ -447,7 +447,7 @@ void HexView::UpdateCursor()
 void HexView::WriteBytes(unsigned char ascii)
 {
 	// Write bytes to the buffer.
-	int bufferIndex = m_selected - (m_topLine << 4);
+    unsigned __int64 bufferIndex = m_selected - (m_topLine << 4);
 	assert(bufferIndex >= 0 && bufferIndex < m_bufferSize);
 
 	char value = (ascii >= 'A' && ascii <= 'F') ? ascii - 'A' + 10 : ascii - '0';
@@ -463,7 +463,7 @@ void HexView::WriteBytes(unsigned char ascii)
 void HexView::WriteChar(unsigned char ascii)
 {
 	// Write chars to the buffer.
-	int bufferIndex = m_selected - (m_topLine << 4);
+    unsigned __int64 bufferIndex = m_selected - (m_topLine << 4);
 	assert(bufferIndex >= 0 && bufferIndex < m_bufferSize);
 	m_buffer[bufferIndex] = ascii;
 	m_file->Seek(m_selected);

@@ -6,7 +6,7 @@ File::File()
 {
     m_filename = 0;
 	m_fullPath = 0;
-    m_filesize = 0;
+    m_filesize.QuadPart = 0;
     m_handle = 0;
 }
 
@@ -35,8 +35,10 @@ bool File::Open(const char* path)
 	}
 
     m_handle = CreateFile(path, access, shareMode, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
-    if (m_handle != INVALID_HANDLE_VALUE)
-        m_filesize = GetFileSize(m_handle, 0);
+	if (m_handle != INVALID_HANDLE_VALUE)
+	{
+		GetFileSizeEx(m_handle, &m_filesize);
+	}
 
     return m_handle != 0;
 }
@@ -54,24 +56,24 @@ void File::Close()
     CloseHandle(m_handle);
 }
 
-void File::Seek(unsigned long long position)
+void File::Seek(long long position)
 {
     if (!m_handle)
         return;
-
-    LARGE_INTEGER distance;
-    distance.QuadPart = position;
-	if (!SetFilePointerEx(m_handle, distance, 0, FILE_BEGIN))
+	LARGE_INTEGER dist;
+	dist.QuadPart = position;
+	if (!SetFilePointerEx(m_handle, dist, 0, FILE_BEGIN))
 		Error("SetFilePointerEx failed");
 }
 
-void File::Read(void* buffer, unsigned long long size)
+void File::Read(void* buffer, unsigned int nBytes)
 {
 	if (!m_handle)
 		return;
 
 	DWORD bytesRead;
-	ReadFile(m_handle, buffer, size, &bytesRead, 0);
+	ReadFile(m_handle, buffer, nBytes, &bytesRead, 0);
+	
 }
 
 void File::Read(unsigned char byte)
