@@ -457,7 +457,7 @@ void HexView::WriteBytes(unsigned char ascii)
 	m_buffer[bufferIndex] = b;
 
 	m_file->Seek(m_selected);
-	m_file->Write(m_buffer + bufferIndex, 1);
+	m_file->Write(b);
 }
 
 void HexView::WriteChar(unsigned char ascii)
@@ -467,5 +467,5 @@ void HexView::WriteChar(unsigned char ascii)
 	assert(bufferIndex >= 0 && bufferIndex < m_bufferSize);
 	m_buffer[bufferIndex] = ascii;
 	m_file->Seek(m_selected);
-	m_file->Write(m_buffer + bufferIndex, 1);
+    m_file->Write(ascii);
 }

@@ -54,7 +54,7 @@ void File::Close()
     CloseHandle(m_handle);
 }
 
-void File::Seek(unsigned int position)
+void File::Seek(unsigned long long position)
 {
     if (!m_handle)
         return;
@@ -65,21 +65,31 @@ void File::Seek(unsigned int position)
 		Error("SetFilePointerEx failed");
 }
 
-void File::Read(void* buffer, unsigned int size)
+void File::Read(void* buffer, unsigned long long size)
+{
+	if (!m_handle)
+		return;
+
+	DWORD bytesRead;
+	ReadFile(m_handle, buffer, size, &bytesRead, 0);
+}
+
+void File::Read(unsigned char byte)
 {
     if (!m_handle)
         return;
 
     DWORD bytesRead;
-    ReadFile(m_handle, buffer, size, &bytesRead, 0);
+    ReadFile(m_handle, &byte, 1, &bytesRead, 0);
+	
 }
 
-void File::Write(void* buffer, unsigned int size)
+void File::Write(unsigned char byte)
 {
 	if (!m_handle)
 		return;
 
 	DWORD bytesWritten;
-	if (!WriteFile(m_handle, buffer, size, &bytesWritten, 0))
+	if (!WriteFile(m_handle, &byte, 1, &bytesWritten, 0))
 		Error("WriteFile failed");
 }

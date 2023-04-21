@@ -5,13 +5,14 @@ class File
     public:
         File();
 		~File();
-
+        
         bool Open(const char* path);
         void Close();
-        unsigned int GetSize() const;
-        void Seek(unsigned int position);
-        void Read(void* buffer, unsigned int size);
-		void Write(void* buffer, unsigned int size);
+        unsigned long long GetSize() const;
+        void Seek(unsigned long long position);
+        void Read(unsigned char byte);
+        void Read(void *buffer, unsigned long long size);
+		void Write(unsigned char byte);
         bool IsOpen() const;
 		bool IsReadOnly() const;
 		const char* GetFullPath() const;
@@ -20,12 +21,12 @@ class File
     private:
         char* m_filename;
 		char* m_fullPath;
-        unsigned int m_filesize;
+        unsigned long long m_filesize;
         void* m_handle;
 		bool m_readOnly;
 };
 
-inline unsigned int File::GetSize() const
+inline unsigned long long File::GetSize() const
 {
     return m_filesize;
 }

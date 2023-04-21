@@ -13,8 +13,8 @@ class HexView : public Window
         virtual void OnWindowResized(int newWidth, int newHeight);
         virtual void OnKeyEvent(KeyEvent& keyEvent);
 
-        int GetSelectedOffset();
-        int GetFileSize();
+        unsigned long long GetSelectedOffset();
+        unsigned long long GetFileSize();
 
     private:
 		void UpdateCursor();
@@ -22,15 +22,15 @@ class HexView : public Window
 		void WriteBytes(unsigned char ascii);
 		void WriteChar(unsigned char ascii);
 
-        int GetSelectedLine();
-        int GetLastLine();
-        int GetBottomLine();
+        unsigned long long GetSelectedLine();
+        unsigned long long GetLastLine();
+        unsigned long long GetBottomLine();
 
         unsigned char* m_buffer;
-        int m_bufferSize;
-        int m_topLine;
-        int m_selected;
-        int m_fileSize;
+        unsigned long long m_bufferSize;
+        unsigned long long m_topLine;
+        unsigned long long m_selected;
+        unsigned long long m_fileSize;
 
 		File* m_file;
 
@@ -45,27 +45,27 @@ class HexView : public Window
 		int m_nibbleIndex;
 };
 
-inline int HexView::GetSelectedLine()
+inline unsigned long long HexView::GetSelectedLine()
 {
     return m_selected >> 4;
 }
 
-inline int HexView::GetLastLine()
+inline unsigned long long HexView::GetLastLine()
 {
     return m_fileSize >> 4;
 }
 
-inline int HexView::GetBottomLine()
+inline unsigned long long HexView::GetBottomLine()
 {
     return m_topLine + m_height - 1;
 }
 
-inline int HexView::GetSelectedOffset()
+inline unsigned long long HexView::GetSelectedOffset()
 {
     return m_selected;
 }
 
-inline int HexView::GetFileSize()
+inline unsigned long long HexView::GetFileSize()
 {
     return m_fileSize;
 }
